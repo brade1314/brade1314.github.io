@@ -1,0 +1,133 @@
+# Site settings
+title: brade Blog
+SEOTitle: brade 的博客 | brade Blog
+header-img: img/home-bg.jpg
+email: brade1314@gmail.com
+description: "java | brade1314，Web，Software Engineer，vertx | 这里是 @brade1314 的个人博客。"
+keyword: "brade, brade1314, brade1314 Blog, 博客, 个人网站, 互联网, java, Web,"
+url: "brade1314.github.io"              # your host, for absolute URL
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
+
+# Publish posts or collection documents with a future date.
+future: true
+
+# SNS settings
+RSS: false
+weibo_username:     6210527293
+zhihu_username:     brade_zhong
+github_username:    brade1314
+#twitter_username:   brade59594469
+facebook_username:  brade1314
+#linkedin_username:
+
+
+
+# Build settings
+# from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
+highlighter: rouge
+permalink: date
+paginate: 10
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+# If you have timezone issue (e.g. #68) in China, uncomment to use this:
+#timezone: CN
+previous-page: 上一页
+next-page: 下一页
+
+
+
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+# make sure you have this gem installed
+# `$ gem install jekyll-paginate`
+plugins: [jekyll-paginate]
+
+
+
+# Markdown settings
+# replace redcarpet to kramdown,
+# although redcarpet can auto highlight code, the lack of header-id make the catalog impossible, so I switch to kramdown
+# document: http://jekyllrb.com/docs/configuration/#kramdown
+markdown: kramdown
+kramdown:
+input: GFM                            # use Github Flavored Markdown !important
+
+
+
+# Disqus settings
+disqus_username: brade
+
+# changyan settings
+#changyan_appid: cyu7bYVpw
+#changyan_conf: prod_c7289ade2fbd48d00eb948e11798d025
+
+
+
+# Analytics settings
+# Baidu Analytics
+# ba_track_id: [your track id]
+
+# Google Analytics
+ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
+ga_domain: blog.youyeetech.com
+
+
+
+# Sidebar settings
+sidebar: true                           # whether or not using Sidebar.
+sidebar-about-description: "Society is a mud pit, we must stand on the high ground. <br> 社会是一个泥坑，我们得站在高地上。"
+sidebar-avatar: /img/avatar-brade-ny.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+
+
+
+# Featured Tags
+featured-tags: true                     # whether or not using Feature-Tags
+featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+
+
+
+# Progressive Web Apps
+chrome-tab-theme-color: "#000000"
+service-worker: true
+
+
+
+# Friends
+
+#friends: [
+#    {
+#    #     title: "Su",
+#    #     href: "http://su.gallery/"
+#    # },{
+#        title: "乱序",
+#        href: "http://mida.re/"
+#    },{
+#        title: "前端外刊评论",
+#        href: "http://qianduan.guru/"
+#    },{
+#        title: "天镶的博客",
+#        href: "http://lingyu.wang/"
+#    },{
+#        title: "Luke 的自留地",
+#        href: "http://hmqk1995.github.io"
+#    },{
+#        title: "Ebn's Blog",
+#        href: "http://ebnbin.com/"
+#    },{
+#        title: "SmdCn's Blog",
+#        href: "http://blog.smdcn.net"
+#    },{
+#        title: "David's Game",
+#        href: "https://www.ruoyaowu.com/"
+#    },{
+#        title: "DHong Say",
+#        href: "http://dhong.co"
+#    },{
+#        title: "尹峰以为",
+#        href: "http://ingf.github.io/"
+#    },{
+#        title: "解旻的博客",
+#        href: "http://xieminis.me/"
+#    }
+#]
+
