@@ -1,3 +1,8 @@
+/*!
+ * brade Blog v1.7.0 (http://brade1314.github.io)
+ * Copyright 2019 brade <brade1314@gmail.com>
+ */
+
 @media (min-width: 1200px) {
   .post-container,
   .sidebar-container {
@@ -48,6 +53,7 @@
 .sidebar-container .short-about .list-inline > li {
   padding-left: 0px;
 }
+.sidebar-container a span.fa-stack{width: 1.9em;}
 .catalog-container {
   padding: 0px;
 }
@@ -179,7 +185,7 @@
     Multi-line snackbar height: 80 dp
     Text: Roboto Regular 14 sp
     Action button: Roboto Medium 14 sp, all-caps text
-    Default background fill: #323232 100%  
+    Default background fill: #323232 100%
   */
     left: 0px;
     right: 0px;
