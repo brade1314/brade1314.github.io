@@ -12,29 +12,28 @@ tags:
 ---
 
 # 写在前面   
-最近在看一门网页播放的课程，当一节课播放完毕，无法自动播放下一节。做为一个后端程序员，下意识就想用代码解决问题。首先想到了 `selenium`，然后发现只能针对特定浏览器，还需要下载驱动，比如`chrome`，需要 `chromedriver`，本人更熟悉 `java`，如果用java开发，那么还得虚拟机环境。。。如果他人使用，折腾个带虚拟机的程序，体积有点大(虽然 `java9` 以后可以定制)；然后想到 `chrome extension`，依赖少，轻量，前提是对web前端技术( `html，js，css`) 有一定了解。
+最近在看一门网页播放的课程，当一节课播放完毕，无法自动播放下一节。做为一个后端程序员，下意识就想用代码解决问题。首先想到了 `selenium`，然后发现只能针对特定浏览器，还需要下载驱动，比如`chrome`，需要 `chromedriver`，本人更熟悉 `java`，如果用 `java` 开发，那么还得虚拟机环境。。。如果他人使用，折腾个带虚拟机的程序，体积有点大(虽然 `java9` 以后可以定制)；然后想到 `chrome extension`，依赖少，轻量，前提是对web前端技术( `html，js，css`) 有一定了解。
 
 # chrome extension
->`Chrome` 扩展程序是定制浏览体验的小型软件程序。它们使用户能够根据个人需求或偏好定制`Chrome`功能和行为。它们基于 `HTML`，`JavaScript` 和 `CSS` 等Web技术构建。    
+> `Chrome` 扩展程序是定制浏览体验的小型软件程序。它们使用户能够根据个人需求或偏好定制`Chrome`功能和行为。它们基于 `HTML`，`JavaScript` 和 `CSS` 等Web技术构建。    
 >扩展必须实现一个狭义定义且易于理解的单一目的。单个扩展可以包括多个组件和一系列功能，只要所有内容都有助于实现共同目标。
 >
 >浏览器栏中的扩展程序图标的屏幕截图用户界面应该是最小的并且具有意图。它们的范围可以从简单的图标（如 `Google Mail Checker` 扩展程序）到覆盖整个页面。
->      
+>
 >扩展文件压缩为用户下载和安装的单个 `.crx` 包。这意味着扩展不依赖于来自Web的内容，这与普通的Web应用程序不同。扩展程序通过`Chrome`开发人员信息中心发布，并发布到`Chrome`网上应用店。
 
   请戳 👉 [*官方文档*](https://developer.chrome.com/extensions)
 
 
-##核心文件说明
+## 核心文件说明
 - 1、 **`manifest.json`**    
-
  	每个扩展都有一个名为 [*manifest.json*](https://developer.chrome.com/extensions/manifest) 的JSON格式的清单文件，它提供重要信息。
-
+ 	
         {
 		  // Required 必需
 		  "manifest_version": 2, // 版本，现在固定是这个
 		  "name": "My Extension",
-		  //版本号，chrome根据版本号判断是否需要将插件更新至新的版本
+		  // 版本号，chrome根据版本号判断是否需要将插件更新至新的版本
 		  "version": "versionString", 
 		
 		  // Recommended 推荐
@@ -44,14 +43,14 @@ tags:
 		
 		  // Pick one (or none) 二选一
 		  "browser_action": {...},
-          // 当某些特定页面打开才显示的图标
+		  // 当某些特定页面打开才显示的图标
 		  "page_action": {...},
 		
 		  // Optional 可选的
 		  "action": ...,
 		  "author": ...,
 		  "automation": ...,
-          // 会一直常驻的后台JS或后台页面
+		  // 会一直常驻的后台JS或后台页面
 		  "background": {
 		    // Recommended
 		    "persistent": false,
@@ -66,10 +65,10 @@ tags:
 		    }
 		  },
 		  "chrome_url_overrides": {...},
-		   // commands API 用来添加快捷键,需要在 background page 上添加监听器绑定 handler
+		  // commands API 用来添加快捷键,需要在 background page 上添加监听器绑定 handler
 		  "commands": {...},
 		  "content_capabilities": ...,
-          // 需要直接注入页面的JS
+		  // 需要直接注入页面的JS
 		  "content_scripts": [{...}],
 		  "content_security_policy": "policyString",
 		  "converted_from_user_script": ...,
@@ -86,7 +85,7 @@ tags:
 		    "multiple_mounts": true,
 		    "source": "network"
 		  },
-           // 插件主页，可以链接自己主页
+		  // 插件主页，可以链接自己主页
 		  "homepage_url": "http://path/to/homepage",
 		  "import": [{"id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],
 		  "incognito": "spanning, split, or not_allowed",
@@ -100,18 +99,18 @@ tags:
 		    "keyword": "aString"
 		  },
 		  "optional_permissions": ["tabs"],
-           // Chrome40以前的插件配置页写法，跟下面一个参数二选一，同时存在只认后一个
+		  // Chrome40以前的插件配置页写法，跟下面一个参数二选一，同时存在只认后一个
 		  "options_page": "options.html",
 		  "options_ui": {
 		    "chrome_style": true,
 		    "page": "options.html"
 		  },
-		   // 操作需要申请的权限
+		  // 操作需要申请的权限
 		  "permissions": ["tabs"], 
 		  "platforms": ...,
 		  "requirements": {...},
 		  "sandbox": [...],
-		   //插件名字简写
+		  // 插件名字简写
 		  "short_name": "Short Name",
 		  "signature": ...,
 		  "spellcheck": ...,
@@ -120,17 +119,15 @@ tags:
 		  },
 		  "system_indicator": ...,
 		  "tts_engine": {...},
-          //如果不是通过 chrome web store 自动更新插件
+		  // 如果不是通过 chrome web store 自动更新插件
 		  "update_url": "http://path/to/updateInfo.xml",
 		  "version_name": "aString",
-		   //提供插件pkg中某些资源是当前 web page 可以使用的
+		  // 提供插件pkg中某些资源是当前 web page 可以使用的
 		  "web_accessible_resources": [...]
 		}
 
-
-+ 2、 **`Chrome API`**
-
- 	所有的`Chrome API`都是以`chrome`对象开头，具体参数请看[*官方文档*](https://developer.chrome.com/apps/api_index)
++ 2、 **`Chrome API`**     
+        所有的`Chrome API`都是以`chrome`对象开头，具体参数请看[*官方文档*](https://developer.chrome.com/apps/api_index)。
  
 		bookmarks 操纵书签的API 
 
@@ -185,16 +182,17 @@ tags:
 		windows 创建、修改、重排窗口
 
 
-##如何开始
-###1. 创建清单：扩展清单开始。 创建一个名为 [`manifest.json`](#核心文件说明) 的文件。
-- 通过导航到chrome：// extensions来打开`Extension Management`页面。
-	- 也可以通过单击`Chrome`菜单打开“扩展管理”页面，将鼠标悬停在"更多工具"上，然后选择"扩展"。
+## 如何开始
+
+### 1. 创建清单：扩展清单开始。创建一个名为 `manifest.json` 的文件。
+- 通过导航到 `chrome://extensions` 来打开 `Extension Management` 页面。
+	- 也可以通过单击 `Chrome` 菜单打开 `扩展管理` 页面，将鼠标悬停在 `更多工具` 上，然后选择 `扩展`。
 + 单击开发人员模式旁边的切换开关启用开发人员模式。
-* 单击`加载已解压的扩展程序`按钮并选择扩展目录。
+* 单击 `加载已解压的扩展程序` 按钮并选择扩展目录。
 
-	![](chrome-extension/img/extensions_1.png)
+![](/img/chrome-extension/extensions_1.png)
 
-###2、添加后台脚本文件	    
+### 2、添加后台脚本文件	    
 
 通过创建名为background.js的文件并将其放在扩展目录中来介绍后台脚本。
 必须在清单中注册后台脚本和许多其他重要组件。 在清单中注册后台脚本会告诉扩展程序要引用哪个文件，以及该文件的行为方式。
@@ -210,7 +208,7 @@ tags:
 	    "manifest_version": 2
 	  }
 
-在background.js中根据需求加上事件监听和业务处理。
-导航回扩展管理页面，然后单击“重新加载”链接。 通过蓝色链接背景页面可以使用新字段“检查视图”。
+在 `background.js` 中根据需求加上事件监听和业务处理。
+导航回扩展管理页面，然后单击 `重新加载` 链接。 通过蓝色链接背景页面可以使用新字段 `检查视图` 。
 	
-![](chrome-extension/img/extensions_2.png)
+![](/img/chrome-extension/extensions_2.png)
