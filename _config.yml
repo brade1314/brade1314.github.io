@@ -63,7 +63,7 @@ kramdown:
 
 gittalk_clientID: d59f74534cf3404c1666
 gittalk_clientSecret: 8befc47470ba1a09491c1161052cf41cc603cec5
-github_repo: https://github.com/brade1314/brade1314.github.io
+github_repo: brade1314.github.io
 
 # Analytics settings
 # Baidu Analytics
