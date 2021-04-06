@@ -5,7 +5,7 @@ header-img: img/home-bg.jpg
 email: brade1314@gmail.com
 description: "java | brade1314，Web，Software Engineer，vertx | 这里是 @brade1314 的个人博客。"
 keyword: "brade, brade1314, brade1314 Blog, 博客, 个人网站, 互联网, java, Web,"
-url: "http://blog.r136.dev"              # your host, for absolute URL
+url: "brade1314.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
@@ -71,7 +71,7 @@ github_repo: brade1314.github.io
 
 # Google Analytics
 ga_track_id: 'UA-135750432-1'            # Format: UA-xxxxxx-xx
-ga_domain: blog.r136.dev
+ga_domain: brade1314.github.io
 
 
 
