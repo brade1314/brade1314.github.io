@@ -1,7 +1,7 @@
 ---
 layout:       post
 title:        "netty源码解析"
-subtitle:     "NioServerSocketChannel"
+subtitle:     "NioServerSocketChannel之NioServerSocketChannel"
 date:         2021-07-17 16:23:00
 author:       "Brade"
 header-style: text
@@ -23,7 +23,9 @@ tags:
 继承`DefaultAttributeMap`并实现了`Channel`接口。`SingleThreadEventLoop`中的`register`方法最终是调用了此类中
 内部抽象类`AbstractUnsafe`的`AbstractUnsafe.register()`。
 > `AbstractUnsafe` 部分方法。
+
 ```java
+
         @Override
         public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             ObjectUtil.checkNotNull(eventLoop, "eventLoop");
@@ -98,10 +100,13 @@ tags:
                 safeSetFailure(promise, t);
             }
         }
+        
 ```
 
 > `bind`方法实现，`ServerBootstrap`中的`doBind0`方法调用`channel`中的`bind`，就是在此实现。
+
 ```java
+
         @Override
         public final void bind(final SocketAddress localAddress, final ChannelPromise promise) {
             assertEventLoop();
@@ -143,13 +148,16 @@ tags:
 
             safeSetSuccess(promise);
         }
+        
 ```
 
 ## AbstractNioChannel
 抽象类，继承 `AbstractChannel`。扩展了基于 `Selector` 的方法实现。
 定义内部抽象类`AbstractNioUnsafe`，具体业务由此内部抽象类实现。
+
 ```java
-protected abstract class AbstractNioUnsafe extends AbstractUnsafe implements NioUnsafe {
+
+    protected abstract class AbstractNioUnsafe extends AbstractUnsafe implements NioUnsafe {
 
         protected final void removeReadOp() {
             SelectionKey key = selectionKey();
@@ -306,13 +314,16 @@ protected abstract class AbstractNioUnsafe extends AbstractUnsafe implements Nio
             return selectionKey.isValid() && (selectionKey.interestOps() & SelectionKey.OP_WRITE) != 0;
         }
     }
+    
 ```
 
 ## AbstractNioMessageChannel
 抽象类，继承`AbstractNioChannel`，`Channel`对消息进行操作的基类。
 主要定义`NioMessageUnsafe`扩展了父类中的内部类`AbstractNioUnsafe`。
+
 ```java
-private final class NioMessageUnsafe extends AbstractNioUnsafe {
+
+    private final class NioMessageUnsafe extends AbstractNioUnsafe {
 
         private final List<Object> readBuf = new ArrayList<Object>();
 
@@ -426,13 +437,16 @@ private final class NioMessageUnsafe extends AbstractNioUnsafe {
             }
         }
     }
+    
 ```
 
 ## NioServerSocketChannel
 普通类，继承`AbstractNioMessageChannel`并实现`ServerSocketChannel`接口。
 > 构造器如下：
+
 ```java
-private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
+
+    private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
     private static final SelectorProvider DEFAULT_SELECTOR_PROVIDER = SelectorProvider.provider();
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(NioServerSocketChannel.class);
@@ -475,9 +489,13 @@ private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
         super(null, channel, SelectionKey.OP_ACCEPT);
         config = new NioServerSocketChannelConfig(this, javaChannel().socket());
     }
+    
 ```
+
 > `doBind` 方法
+
 ```java
+
     /**
      * 绑定方法，根据jdk7版本区分
      * @param localAddress
@@ -492,10 +510,13 @@ private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
             javaChannel().socket().bind(localAddress, config.getBacklog());
         }
     }
+    
 ```
 
 > `doReadMessages` 方法
+
 ```java
+
     /**
      * 读取消息，由负责io的NioSocketChannel处理，父类AbstractNioMessageChannel的内部类NioMessageUnsafe调用
      * @param buf
@@ -523,9 +544,13 @@ private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
 
         return 0;
     }
+    
 ```    
+
 > `doConnect` 方法
+
 ```java
+
     // Unnecessary stuff
     /**
      * 由父类AbstractNioChannel调用，本类只负责监听连接，不处理连接io，所以实际上不起作用
@@ -539,10 +564,14 @@ private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
             SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
         throw new UnsupportedOperationException();
     }
+    
 ```
+
 > `doWriteMessage` 方法
+
 ```java
-/**
+
+    /**
      * 当前类只负责连接，不负责io处理，所以直接抛个异常，不处理业务
      * @param msg
      * @param in
@@ -553,4 +582,5 @@ private static final ChannelMetadata METADATA = new ChannelMetadata(false, 16);
     protected boolean doWriteMessage(Object msg, ChannelOutboundBuffer in) throws Exception {
         throw new UnsupportedOperationException();
     }
+    
 ```

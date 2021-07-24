@@ -1,6 +1,6 @@
 ---
 layout:       post
-title:        "netty源码解析"
+title:        "netty源码解析之NioEventLoopGroup"
 subtitle:     "NioEventLoopGroup"
 date:         2021-07-04 16:30:00
 author:       "Brade"
@@ -147,8 +147,9 @@ public abstract class AbstractEventExecutorGroup implements EventExecutorGroup {
 ## MultithreadEventExecutorGroup
 抽象类，多线程事件循环执行器池，继承了`AbstractEventExecutorGroup`，维护了一个`EventExecutor`数组，管理多线程，定义了一些 `EventExecutor` 数组的操作方法。
 > ![img.png](/img/netty/MultithreadEventExecutorGroup.png)
-> 
+>
 > 主要在这个构造器中进行功能实现，调用子类`NioEventLoopGroup`中的`newChild`方法。
+
 ```java
     /**
      * Create a new instance.
@@ -233,8 +234,8 @@ public abstract class AbstractEventExecutorGroup implements EventExecutorGroup {
 
 ## MultithreadEventLoopGroup
 抽象类，多线程事件循环池，`EventLoopGroup` 实现的抽象基类，同时继承了`MultithreadEventExecutorGroup`，可同时处理多个线程的任务。
-> - 设置了默认线程数为`cup核心 * 2`
 
+> - 设置了默认线程数为`cup核心 * 2`
 ``` java
 static {
         DEFAULT_EVENT_LOOP_THREADS = Math.max(1, SystemPropertyUtil.getInt(
@@ -247,6 +248,7 @@ static {
 ```
 
 > - 重写父类 `MultithreadEventExecutorGroup` 的默认线程工厂方法，父类方法线程正常优先级 `5`，重写后为最大优先级 `10`。
+
 ```java
     @Override
     protected ThreadFactory newDefaultThreadFactory() {
@@ -254,7 +256,8 @@ static {
     }
 ```
 
-> - 实现接口`EventLoopGroup`定义的注册`channel`方法，`EventLoop`处理`channel`注册后的所有`I/O`操作
+> - 实现接口`EventLoopGroup`定义的注册`channel`方法，`EventLoop`处理`channel`注册后的所有`I/O`操作。
+
 ```java
     @Override
     public EventLoop next() {

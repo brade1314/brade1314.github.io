@@ -1,6 +1,6 @@
 ---
 layout:       post
-title:        "netty源码解析"
+title:        "netty源码解析之NioEventLoop"
 subtitle:     "NioEventLoop"
 date:         2021-07-05 13:30:00
 author:       "Brade"
@@ -78,7 +78,9 @@ public interface EventExecutor extends EventExecutorGroup {
 接口，只继承了 `EventExecutor`，未做任何处理，空白接口。
 
 ## AbstractExecutorService
-JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：该类使用newTaskFor 返回的RunnableFuture 实现submit、invokeAny 和invokeAll 方法，默认为该包中提供的FutureTask 类。例如，submit(Runnable) 的实现创建了一个关联的 RunnableFuture，它被执行并返回。子类可以覆盖 newTaskFor 方法以返回除 FutureTask 之外的 RunnableFuture 实现。
+`JDK`中定义普通类，是`ExecutorService`的默认实现类。此类说明：该类使用`newTaskFor` 返回的`RunnableFuture` 实现`submit`、`invokeAny`
+和`invokeAll` 方法，默认为该包中提供的`FutureTask` 类。例如，`submit(Runnable)` 的实现创建了一个关联的 `RunnableFuture`，它被执行并返回。
+子类可以覆盖 `newTaskFor` 方法以返回除 `FutureTask` 之外的 `RunnableFuture` 实现。
 ```java
  protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
         return new FutureTask<T>(runnable, value);
@@ -103,6 +105,7 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
     }
 ```
 > 队列长度增长算法如下：当队列长度小于`64`时，增长为原来的`2倍 + 2`，大于等于是增长为原来的`1.5倍`。
+
 ```java
     @Override
     public boolean offer(T e) {
@@ -124,7 +127,9 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
         return true;
     }
 ```
+
 > 具体调度实现在这个方法：
+
 ```java
     private <V> ScheduledFuture<V> schedule(final ScheduledFutureTask<V> task) {
         // 当前线程如果在EventLoop中，直接放到任务队列
@@ -183,6 +188,7 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
     }
 ```
 > 具体实现了父类的 [AbstractScheduledEventExecutor](#AbstractScheduledEventExecutor) `lazyExecute()` 方法：
+
 ```java
     @Override
     public void lazyExecute(Runnable task) {
@@ -227,8 +233,9 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
         }
     }
 ```
+
 ```java
-/**
+    /**
      * 开始启动线程
      */
     private void startThread() {
@@ -253,8 +260,9 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
         }
     }
 ```
+
 ```java
-/**
+    /**
      * 线程启动的具体业务方法
      */
     private void doStartThread() {
@@ -382,7 +390,9 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
 ## SingleThreadEventLoop
 抽象类，继承了 `SingleThreadEventExecutor` ,再实现了`EventLoop`里面的接口。
 > 比如注册 `channel` 到 `selector` 上的接口
+
 ```java
+
     @Override
     public EventLoop next() {
         //调用的父类 AbstractEventExecutor中的 next()
@@ -399,12 +409,15 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
         promise.channel().unsafe().register(this, promise);
         return promise;
     }
+    
 ```
 
 ## NioEventLoop
 普通类，继承了`SingleThreadEventLoop`，实现多路复用`selector`的注册方法。
 > 构造器，`NioEventLoopGroup`  的 `newChild()` 进行了调用:
+
 ```java
+
     /**
      * 构造器，NioEventLoopGroup 的 newChild() 进行了调用
      * @param parent 
@@ -427,10 +440,14 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
         this.selector = selectorTuple.selector;
         this.unwrappedSelector = selectorTuple.unwrappedSelector;
     }
+    
 ```
-> `run()`，在 [SingleThreadEventExecutor](#SingleThreadEventExecutor) 中的 `doStartThread()` 中进行调用
+
+> `run()方法`，在 [SingleThreadEventExecutor](#SingleThreadEventExecutor) 中的 `doStartThread()` 中进行调用
+
 ```java
-@Override
+
+    @Override
     protected void run() {
         int selectCnt = 0;
         // 死循环
@@ -547,9 +564,12 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
         }
     }
 ```
+
 > 打开创建 `selector`
+
 ```java
-/**
+
+    /**
      * 打开选择器，返回选择器元组
      * @return SelectorTuple
      */
@@ -651,8 +671,11 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
                                  new SelectedSelectionKeySetSelector(unwrappedSelector, selectedKeySet));
     }
 ```
+
 > `run`方法中调用了处理`SelectedKeys`的策略。
+
 ```java
+
     /**
      * 处理 SelectedKeys 策略
      */
@@ -665,4 +688,5 @@ JDK中定义普通类，是`ExecutorService`的默认实现类。此类说明：
             processSelectedKeysPlain(selector.selectedKeys());
         }
     }
+    
 ```

@@ -1,6 +1,6 @@
 ---
 layout:       post
-title:        "netty源码解析"
+title:        "netty源码解析之NioSocketChannel"
 subtitle:     "NioSocketChannel"
 date:         2021-07-24 17:00:00
 author:       "Brade"
@@ -21,7 +21,9 @@ tags:
 ## AbstractNioByteChannel
 抽象类，继承自`AbstractNioChannel`，而`AbstractNioChannel`已经在`NioServerSocketChannel`中有说明，不再重复。
 >
+> 
 ```java
+
     /**
      * 将对象写入操作系统。
      */
@@ -135,10 +137,14 @@ tags:
             eventLoop().execute(flushTask);
         }
     }
+    
 ```
+
 > 内部类 `NioByteUnsafe`
+
 ```java
-protected class NioByteUnsafe extends AbstractNioUnsafe {
+
+    protected class NioByteUnsafe extends AbstractNioUnsafe {
 
         private void closeOnRead(ChannelPipeline pipeline) {
             if (!isInputShutdown0()) {
@@ -233,13 +239,16 @@ protected class NioByteUnsafe extends AbstractNioUnsafe {
             }
         }
     }
+    
 ```
 
 ## NioSocketChannel
 普通类，与`NioServerSocketChannel`成对使用，前者监听连接，`NioSocketChannel`负责处理连接的io事件。
 > 构造器
+> 
 ```java
- /**
+
+    /**
      * 选择器提供者，来自jdk的nio包
      */
     private static final SelectorProvider DEFAULT_SELECTOR_PROVIDER = SelectorProvider.provider();
@@ -293,9 +302,12 @@ protected class NioByteUnsafe extends AbstractNioUnsafe {
     }
 
 ```
-> 停止输入输出的访求
+
+> 停止输入输出的方法
+
 ```java
- /**
+
+    /**
      * 停止输出
      * @param promise
      * @return
@@ -340,7 +352,9 @@ protected class NioByteUnsafe extends AbstractNioUnsafe {
 ```
 
 > 判断 `Channel` 是否连接方法。
+
 ```java
+
     /**
      * 绑定连接，最终调用的 SocketChannelImpl#bind方法
      * @param localAddress
@@ -381,10 +395,14 @@ protected class NioByteUnsafe extends AbstractNioUnsafe {
             }
         }
     }
+    
 ```
+
 > `SocketChannelImpl`的`bind`方法，来自`jdk中`的`nio`开发包。
+
 ```java
-@Override
+
+    @Override
     public SocketChannel bind(SocketAddress local) throws IOException {
         readLock.lock();
         try {
@@ -414,10 +432,14 @@ protected class NioByteUnsafe extends AbstractNioUnsafe {
         }
         return this;
     }
+    
 ```
+
 > `channel` 的读写方法
+
 ```java
- @Override
+
+    @Override
     protected int doReadBytes(ByteBuf byteBuf) throws Exception {
         final RecvByteBufAllocator.Handle allocHandle = unsafe().recvBufAllocHandle();
         allocHandle.attemptedBytesRead(byteBuf.writableBytes());
@@ -517,4 +539,5 @@ protected class NioByteUnsafe extends AbstractNioUnsafe {
 
         incompleteWrite(writeSpinCount < 0);
     }
+    
 ```

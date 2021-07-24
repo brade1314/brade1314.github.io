@@ -1,6 +1,6 @@
 ---
 layout:       post
-title:        "netty源码解析"
+title:        "netty源码解析之ServerBootstrap"
 subtitle:     "ServerBootstrap"
 date:         2021-07-06 13:00:00
 author:       "Brade"
@@ -21,7 +21,9 @@ tags:
 ## AbstractBootstrap
 抽象类，实现了`Cloneable`接口。
 > 构造器
+
 ```java
+
     AbstractBootstrap(AbstractBootstrap<B, C> bootstrap) {
         // 事件循环池 eventLoopGroup
         group = bootstrap.group;
@@ -38,9 +40,13 @@ tags:
         // Bootstrap 参数表
         attrs.putAll(bootstrap.attrs);
     }
+    
 ```
+
 > `bind` 方法实际实现：
+
 ```java
+
     /**
      * 注册 channel 绑定操作实际功能实现方法
      * @param localAddress
@@ -156,8 +162,11 @@ tags:
             }
         });
     }
+    
 ```
+
 ```java
+
     static final class PendingRegistrationPromise extends DefaultChannelPromise {
 
         // Is set to the correct EventExecutor once the registration was successful. Otherwise it will
@@ -184,9 +193,13 @@ tags:
             return GlobalEventExecutor.INSTANCE;
         }
     }
+    
 ```
+
 > 创建 `channel` 实例，在boss:
+
 ```java
+
     /**
      * 用于创建  Channel 实例，在子类 ServerBootstrap中调用
      * @param channelClass
@@ -197,10 +210,13 @@ tags:
                 ObjectUtil.checkNotNull(channelClass, "channelClass")
         ));
     }
+    
 ```
 
 > 设置 `ServerSocketChannel` 的属性和参数列表
+
 ```java
+
     /**
      * 设置 ServerSocketChannel 属性
      * @param option
@@ -219,9 +235,12 @@ tags:
         }
         return self();
     }
+    
 ```
+
 ```java
-/**
+
+    /**
      * 设置 ServerSocketChannel 参数
      * @param key
      * @param value
@@ -237,12 +256,15 @@ tags:
         }
         return self();
     }
+    
 ```
 
 ## ServerBootstrap
 普通类，继承了 [AbstractBootstrap](#AbstractBootstrap) ，扩展了一些方法和属性。
 > 其中最常用的 `group` 方法：
+
 ```java
+
     /**
      * 为父级（接受者）和子级（客户端）设置 EventLoopGroup。
      * 这些EventLoopGroup 用于处理 ServerChannel 的所有事件和 IO 和 Channel
@@ -256,10 +278,14 @@ tags:
         this.childGroup = ObjectUtil.checkNotNull(childGroup, "childGroup");
         return this;
     }
+    
 ```
+
 > 设置 `SocketChannel` 的属性和参数列表：
+
 ```java
-/**
+
+    /**
      * 设置 SocketChannel 属性
      * @param childOption
      * @param value
@@ -277,9 +303,12 @@ tags:
         }
         return this;
     }
+    
 ```
+
 ```java
-/**
+
+    /**
      * 设置 SocketChannel 参数
      * @param childKey
      * @param value
@@ -295,9 +324,13 @@ tags:
         }
         return this;
     }
+    
 ```
+
 > 重写了父类的 `AbstractBootstrap` 的 `init()` 方法：
+
 ```java
+
     /**
      * 重写父类的初始化 channel 方法，被父类 initAndRegister() 方法中调用
      * @param channel
@@ -338,9 +371,13 @@ tags:
             }
         });
     }
+    
 ```
+
 > 设置 `SocketChannel` 的 `ServerBootstrapAcceptor`:
+
 ```java
+
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
         private final EventLoopGroup childGroup;
@@ -416,4 +453,5 @@ tags:
             ctx.fireExceptionCaught(cause);
         }
     }
+    
 ```
