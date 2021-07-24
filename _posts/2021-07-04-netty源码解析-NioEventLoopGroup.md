@@ -234,6 +234,7 @@ public abstract class AbstractEventExecutorGroup implements EventExecutorGroup {
 ## MultithreadEventLoopGroup
 抽象类，多线程事件循环池，`EventLoopGroup` 实现的抽象基类，同时继承了`MultithreadEventExecutorGroup`，可同时处理多个线程的任务。
 > - 设置了默认线程数为`cup核心 * 2`
+
 ``` java
 static {
         DEFAULT_EVENT_LOOP_THREADS = Math.max(1, SystemPropertyUtil.getInt(
@@ -244,6 +245,7 @@ static {
         }
     }
 ```
+
 > - 重写父类 `MultithreadEventExecutorGroup` 的默认线程工厂方法，父类方法线程正常优先级 `5`，重写后为最大优先级 `10`。
 ```java
     @Override
@@ -251,6 +253,7 @@ static {
         return new DefaultThreadFactory(getClass(), Thread.MAX_PRIORITY);
     }
 ```
+
 > - 实现接口`EventLoopGroup`定义的注册`channel`方法，`EventLoop`处理`channel`注册后的所有`I/O`操作
 ```java
     @Override
