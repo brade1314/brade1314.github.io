@@ -14,7 +14,7 @@ tags:
 
 # 一 、[Jekyll](https://www.jekyll.com.cn/) 是什么？
 > 定义来自官网：Jekyll 是一个简单的博客形态的静态站点生产机器。它有一个模版目录，其中包含原始文本格式的文档，
-通过[Markdown](https://daringfireball.net/projects/markdown/)（或者[Textile](http://textile.sitemonks.com/)） 
+通过 [Markdown](https://daringfireball.net/projects/markdown) 或者[Textile](http://textile.sitemonks.com/) 
 以及[Liquid](http://docs.shopify.com/themes/liquid-basics) 转化成一个完整的可发布的静态网站，你可以发布在任何你喜爱的服务器上。
 Jekyll也可以运行在[GitHub Page](http://pages.github.com/) 上，也就是说，你可以使用 GitHub 的服务来搭建你的项目页面、博客或者网站，而且是完全免费的。
 >+ 简单：无需数据库、评论功能，不需要不断的更新版本--只用关心你的博客内容。
@@ -79,7 +79,7 @@ Jekyll也可以运行在[GitHub Page](http://pages.github.com/) 上，也就是�
                -h, --help         Show this message
                -v, --version      Print the name and version
                -t, --trace        Show the full backtrace when an error occurs 
-4. 目录结构，可以查看[官网](https://www.jekyll.com.cn/docs/structure/)。
+4. 目录结构，可以查看 [官网](https://www.jekyll.com.cn/docs/structure/) 。
 一个基本的 Jekyll 网站的目录结构一般是像这样的：
 		
 	|文件/目录|描述|

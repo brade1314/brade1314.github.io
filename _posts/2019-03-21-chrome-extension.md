@@ -127,7 +127,7 @@ tags:
 		}
 
 + 2、 **`Chrome API`**     
-        所有的`Chrome API`都是以`chrome`对象开头，具体参数请看[*官方文档*](https://developer.chrome.com/apps/api_index)。
+        所有的`Chrome API`都是以`chrome`对象开头，具体参数请看[*官方文档*](https://developer.chrome.com/apps/api_index) 。
  
 		bookmarks 操纵书签的API 
 
