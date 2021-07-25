@@ -19,21 +19,21 @@ tags:
 > ![img.png](/img/netty/NioEventLoopGroup.png)
 
 ## Executor
-JDK中定义的接口，线程执行器，主要用来控制线程的启动、执行和关闭，可以简化并发编程的操作，只定义了一个方法。
+`JDK`中定义的接口，线程执行器，主要用来控制线程的启动、执行和关闭，可以简化并发编程的操作，只定义了一个方法。
 ```java
     void execute(Runnable command);
 ```
 
 ## ExecutorService
-JDK中定义的接口，扩展了`Executor`的功能，提供了生命周期管理的方法，返回 Future 对象。
+`JDK`中定义的接口，扩展了`Executor`的功能，提供了生命周期管理的方法，返回 `Future` 对象。
 > ![img.png](/img/netty/ExecutorService.png)
 
 ## ScheduledExecutorService
-JDK中定义的接口，扩展了`ExecutorService`，用于线程任务的定时或者延期执行。
+`JDK`中定义的接口，扩展了`ExecutorService`，用于线程任务的定时或者延期执行。
 > ![img.png](/img/netty/ScheduledExecutorService.png)
 
 ## EventExecutorGroup
-接口，继承了`ScheduledExecutorService` 和 `Iterator`，因此具备了线程和iterator最基本的方法，同时定义了关闭线程、释放线程资源的`优雅`方法。
+接口，继承了`ScheduledExecutorService` 和 `Iterator`，因此具备了线程和`iterator`最基本的方法，同时定义了关闭线程、释放线程资源的`优雅`方法。
 > ![img.png](/img/netty/EventExecutorGroup.png)
 
 ## EventLoopGroup

@@ -1,7 +1,7 @@
 ---
 layout:       post
-title:        "netty源码解析"
-subtitle:     "NioServerSocketChannel之NioServerSocketChannel"
+title:        "netty源码解析之NioServerSocketChannel"
+subtitle:     "NioServerSocketChannel"
 date:         2021-07-17 16:23:00
 author:       "Brade"
 header-style: text

@@ -20,8 +20,7 @@ tags:
 
 ## AbstractNioByteChannel
 抽象类，继承自`AbstractNioChannel`，而`AbstractNioChannel`已经在`NioServerSocketChannel`中有说明，不再重复。
->
-> 
+
 ```java
 
     /**
