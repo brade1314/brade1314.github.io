@@ -15,33 +15,33 @@ tags:
 # springboot 源码解析
 本文中 `springboot` 采用的版本为 `2.5.6`.
 
-- 1.1 `@SpringBootApplication` 注解
+## 1.1 `@SpringBootApplication` 注解
 > 标注此注解的类,是 `SpringBoot` 主配置类, `SpringBoot` 就应该运行这个类的main方法来启动SpringBoot应用.
 
-> 注解定义如下: 
+> 注解定义如下:
 ```java
     @Target({ElementType.TYPE})
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @Inherited
-    @SpringBootConfiguration
-    @EnableAutoConfiguration
-    @ComponentScan(
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(
         excludeFilters = {@Filter(
-        type = FilterType.CUSTOM,
-        classes = {TypeExcludeFilter.class}
-    ), @Filter(
-        type = FilterType.CUSTOM,
-        classes = {AutoConfigurationExcludeFilter.class}
-    )}
-    )
-    public @interface SpringBootApplication {}
+                type = FilterType.CUSTOM,
+                classes = {TypeExcludeFilter.class}
+        ), @Filter(
+                type = FilterType.CUSTOM,
+                classes = {AutoConfigurationExcludeFilter.class}
+        )}
+)
+public @interface SpringBootApplication {}
 ```
 
-* 1.1.1 `@SpringBootConfiguration` 注解
+### 1.1.1 `@SpringBootConfiguration` 注解
 > 表示这是一个Spring Boot的配置类, 就是`Configuration`配置类.
 
-* 1.1.2 `@EnableAutoConfiguration` 注解
+### 1.1.2 `@EnableAutoConfiguration` 注解
 > 开启自动配置功能, 使自动配置生效.
 
 > 包含 `@AutoConfigurationPackage` ,`@Import({AutoConfigurationImportSelector.class})` 注解
@@ -91,15 +91,14 @@ tags:
     }
 ```
 
-- 1.2 `SpringApplication#run(Class<?> primarySource, String... args)`
+## 1.2 `SpringApplication#run(Class<?> primarySource, String... args)`
 > 先创建 `SpringApplication` 实例,再调用对应的`run`方法
 ```java
     public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
         return (new SpringApplication(primarySources)).run(args);
     }
 ```
-
-* 1.2.1 构造器
+### 1.2.1 构造器
 ```java
     public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
         this.sources = new LinkedHashSet();
@@ -277,7 +276,7 @@ tags:
     }
 ```
 
-* 1.2.2 `SpringApplication#run` 方法
+### 1.2.2 `SpringApplication#run` 方法
 ```java
     public ConfigurableApplicationContext run(String... args) {
         // 计时器
@@ -295,47 +294,47 @@ tags:
         listeners.starting(bootstrapContext, this.mainApplicationClass);
 
         try {
-            // 参数
-            ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
-            // 准备环境:根据前面获取的监听构建
-            ConfigurableEnvironment environment = this.prepareEnvironment(listeners, bootstrapContext, applicationArguments);
-            // 配置忽略 Bean 信息
-            this.configureIgnoreBeanInfo(environment);
-            // 打印Spring图标
-            Banner printedBanner = this.printBanner(environment);
-            // 创建应用上下文
-            context = this.createApplicationContext();
-            // 应用启动
-            context.setApplicationStartup(this.applicationStartup);
-            // 准备上下文
-            this.prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
-            // 刷新上下文
-            this.refreshContext(context);
-            // 刷新后执行
-            this.afterRefresh(context, applicationArguments);
-            // 计时器结束
-            stopWatch.stop();
-            if (this.logStartupInfo) {
-                (new StartupInfoLogger(this.mainApplicationClass)).logStarted(this.getApplicationLog(), stopWatch);
-            }
-            // 向监听器发通知 : started
-            listeners.started(context);
-            // 执行Runners
-            this.callRunners(context, applicationArguments);
+        // 参数
+        ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+        // 准备环境:根据前面获取的监听构建
+        ConfigurableEnvironment environment = this.prepareEnvironment(listeners, bootstrapContext, applicationArguments);
+        // 配置忽略 Bean 信息
+        this.configureIgnoreBeanInfo(environment);
+        // 打印Spring图标
+        Banner printedBanner = this.printBanner(environment);
+        // 创建应用上下文
+        context = this.createApplicationContext();
+        // 应用启动
+        context.setApplicationStartup(this.applicationStartup);
+        // 准备上下文
+        this.prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+        // 刷新上下文
+        this.refreshContext(context);
+        // 刷新后执行
+        this.afterRefresh(context, applicationArguments);
+        // 计时器结束
+        stopWatch.stop();
+        if (this.logStartupInfo) {
+        (new StartupInfoLogger(this.mainApplicationClass)).logStarted(this.getApplicationLog(), stopWatch);
+        }
+        // 向监听器发通知 : started
+        listeners.started(context);
+        // 执行Runners
+        this.callRunners(context, applicationArguments);
         } catch (Throwable var10) {
-            this.handleRunFailure(context, var10, listeners);
-            throw new IllegalStateException(var10);
+        this.handleRunFailure(context, var10, listeners);
+        throw new IllegalStateException(var10);
         }
 
         try {
-            // 向监听器发通知 : running
-            listeners.running(context);
-            return context;
+        // 向监听器发通知 : running
+        listeners.running(context);
+        return context;
         } catch (Throwable var9) {
-            this.handleRunFailure(context, var9, (SpringApplicationRunListeners) null);
-            throw new IllegalStateException(var9);
+        this.handleRunFailure(context, var9, (SpringApplicationRunListeners) null);
+        throw new IllegalStateException(var9);
         }
-    }
+        }
 ```
 
 + 1.2.2.1 `SpringApplication#createBootstrapContext`,引导上下文初始化
@@ -344,17 +343,17 @@ tags:
         DefaultBootstrapContext bootstrapContext = new DefaultBootstrapContext();
         // 在构造器中已经从配置文件 spring.factories 获取
         this.bootstrapRegistryInitializers.forEach((initializer) -> {
-            initializer.initialize(bootstrapContext);
+        initializer.initialize(bootstrapContext);
         });
         return bootstrapContext;
-    }
+        }
 ```
 
 + 1.2.2.2 `SpringApplication#configureHeadlessProperty`,无头属性设置
 ```java
     private void configureHeadlessProperty() {
         System.setProperty("java.awt.headless", System.getProperty("java.awt.headless", Boolean.toString(this.headless)));
-    }
+        }
 ```
 
 + 1.2.2.3 `SpringApplication#getRunListeners`,获取监听器
@@ -362,7 +361,7 @@ tags:
     private SpringApplicationRunListeners getRunListeners(String[] args) {
         Class<?>[] types = new Class[]{SpringApplication.class, String[].class};
         return new SpringApplicationRunListeners(logger, this.getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args), this.applicationStartup);
-    }
+        }
 ```
 
 + 1.2.2.4 `SpringApplication#prepareEnvironment`,准备环境
@@ -378,65 +377,65 @@ tags:
         Assert.state(!((ConfigurableEnvironment)environment).containsProperty("spring.main.environment-prefix"), "Environment prefix cannot be set via properties.");
         this.bindToSpringApplication((ConfigurableEnvironment)environment);
         if (!this.isCustomEnvironment) {
-            environment = (new EnvironmentConverter(this.getClassLoader())).convertEnvironmentIfNecessary((ConfigurableEnvironment)environment, this.deduceEnvironmentClass());
+        environment = (new EnvironmentConverter(this.getClassLoader())).convertEnvironmentIfNecessary((ConfigurableEnvironment)environment, this.deduceEnvironmentClass());
         }
 
         ConfigurationPropertySources.attach((Environment)environment);
         return (ConfigurableEnvironment)environment;
-    }
+        }
 ```
 
 > `SpringApplication#getOrCreateEnvironment` 获取环境
 ```java
     private ConfigurableEnvironment getOrCreateEnvironment() {
         if (this.environment != null) {
-            return this.environment;
+        return this.environment;
         } else {
-            switch(this.webApplicationType) {
-            case SERVLET:
-                return new ApplicationServletEnvironment();
-            case REACTIVE:
-                return new ApplicationReactiveWebEnvironment();
-            default:
-                return new ApplicationEnvironment();
-            }
+        switch(this.webApplicationType) {
+        case SERVLET:
+        return new ApplicationServletEnvironment();
+        case REACTIVE:
+        return new ApplicationReactiveWebEnvironment();
+default:
+        return new ApplicationEnvironment();
         }
-    }
+        }
+        }
 ```
 
 > `SpringApplication#configureEnvironment` 配置环境
 ```java
     protected void configureEnvironment(ConfigurableEnvironment environment, String[] args) {
         if (this.addConversionService) {
-            environment.setConversionService(new ApplicationConversionService());
+        environment.setConversionService(new ApplicationConversionService());
         }
 
         this.configurePropertySources(environment, args);
         this.configureProfiles(environment, args);
-    }
+        }
 
-    protected void configurePropertySources(ConfigurableEnvironment environment, String[] args) {
+protected void configurePropertySources(ConfigurableEnvironment environment, String[] args) {
         MutablePropertySources sources = environment.getPropertySources();
         if (!CollectionUtils.isEmpty(this.defaultProperties)) {
-            DefaultPropertiesPropertySource.addOrMerge(this.defaultProperties, sources);
+        DefaultPropertiesPropertySource.addOrMerge(this.defaultProperties, sources);
         }
 
         if (this.addCommandLineProperties && args.length > 0) {
-            String name = "commandLineArgs";
-            if (sources.contains(name)) {
-                PropertySource<?> source = sources.get(name);
-                CompositePropertySource composite = new CompositePropertySource(name);
-                composite.addPropertySource(new SimpleCommandLinePropertySource("springApplicationCommandLineArgs", args));
-                composite.addPropertySource(source);
-                sources.replace(name, composite);
-            } else {
-                sources.addFirst(new SimpleCommandLinePropertySource(args));
-            }
+        String name = "commandLineArgs";
+        if (sources.contains(name)) {
+        PropertySource<?> source = sources.get(name);
+        CompositePropertySource composite = new CompositePropertySource(name);
+        composite.addPropertySource(new SimpleCommandLinePropertySource("springApplicationCommandLineArgs", args));
+        composite.addPropertySource(source);
+        sources.replace(name, composite);
+        } else {
+        sources.addFirst(new SimpleCommandLinePropertySource(args));
+        }
         }
 
-    }
+        }
 
-    protected void configureProfiles(ConfigurableEnvironment environment, String[] args) {}
+protected void configureProfiles(ConfigurableEnvironment environment, String[] args) {}
 ```
 
 + 1.2.2.5 `SpringApplication#configureIgnoreBeanInfo`, 配置忽略 Bean 信息
@@ -444,32 +443,32 @@ tags:
     private void configureIgnoreBeanInfo(ConfigurableEnvironment environment) {
         // 如果为空,则设置默认值为 true
         if (System.getProperty("spring.beaninfo.ignore") == null) {
-            Boolean ignore = (Boolean)environment.getProperty("spring.beaninfo.ignore", Boolean.class, Boolean.TRUE);
-            System.setProperty("spring.beaninfo.ignore", ignore.toString());
+        Boolean ignore = (Boolean)environment.getProperty("spring.beaninfo.ignore", Boolean.class, Boolean.TRUE);
+        System.setProperty("spring.beaninfo.ignore", ignore.toString());
         }
 
-    }
+        }
 ```
 
 + 1.2.2.6 `SpringApplication#printBanner`, 打印 `Spring` 横幅
 ```java
     private Banner printBanner(ConfigurableEnvironment environment) {
         if (this.bannerMode == Mode.OFF) {
-            return null;
+        return null;
         } else {
-            ResourceLoader resourceLoader = this.resourceLoader != null ? this.resourceLoader : new DefaultResourceLoader((ClassLoader)null);
-            SpringApplicationBannerPrinter bannerPrinter = new SpringApplicationBannerPrinter((ResourceLoader)resourceLoader, this.banner);
-            return this.bannerMode == Mode.LOG ? bannerPrinter.print(environment, this.mainApplicationClass, logger) : bannerPrinter.print(environment, this.mainApplicationClass, System.out);
+        ResourceLoader resourceLoader = this.resourceLoader != null ? this.resourceLoader : new DefaultResourceLoader((ClassLoader)null);
+        SpringApplicationBannerPrinter bannerPrinter = new SpringApplicationBannerPrinter((ResourceLoader)resourceLoader, this.banner);
+        return this.bannerMode == Mode.LOG ? bannerPrinter.print(environment, this.mainApplicationClass, logger) : bannerPrinter.print(environment, this.mainApplicationClass, System.out);
         }
-    }
+        }
 ```
 
 + 1.2.2.7 `SpringApplication#createApplicationContext`, 根据应用类型创建应用上下文
 ```java
     // 构造器中初始化了上下文工厂, this.applicationContextFactory = ApplicationContextFactory.DEFAULT;
-    protected ConfigurableApplicationContext createApplicationContext() {
+protected ConfigurableApplicationContext createApplicationContext() {
         return this.applicationContextFactory.create(this.webApplicationType);
-    }
+        }
 ```
 
 > 上下文工厂
@@ -478,12 +477,12 @@ public interface ApplicationContextFactory {
     ApplicationContextFactory DEFAULT = (webApplicationType) -> {
         try {
             switch(webApplicationType) {
-            case SERVLET:
-                return new AnnotationConfigServletWebServerApplicationContext();
-            case REACTIVE:
-                return new AnnotationConfigReactiveWebServerApplicationContext();
-            default:
-                return new AnnotationConfigApplicationContext();
+                case SERVLET:
+                    return new AnnotationConfigServletWebServerApplicationContext();
+                case REACTIVE:
+                    return new AnnotationConfigReactiveWebServerApplicationContext();
+                default:
+                    return new AnnotationConfigApplicationContext();
             }
         } catch (Exception var2) {
             throw new IllegalStateException("Unable create a default ApplicationContext instance, you may need a custom ApplicationContextFactory", var2);
@@ -520,22 +519,22 @@ public interface ApplicationContextFactory {
         // 引导上下文关闭
         bootstrapContext.close(context);
         if (this.logStartupInfo) {
-            this.logStartupInfo(context.getParent() == null);
-            this.logStartupProfileInfo(context);
+        this.logStartupInfo(context.getParent() == null);
+        this.logStartupProfileInfo(context);
         }
         // 将容器指定的参数封装成bean
         ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
         beanFactory.registerSingleton("springApplicationArguments", applicationArguments);
         if (printedBanner != null) {
-            beanFactory.registerSingleton("springBootBanner", printedBanner);
+        beanFactory.registerSingleton("springBootBanner", printedBanner);
         }
 
         if (beanFactory instanceof DefaultListableBeanFactory) {
-            ((DefaultListableBeanFactory)beanFactory).setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
+        ((DefaultListableBeanFactory)beanFactory).setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
         }
 
         if (this.lazyInitialization) {
-            context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());
+        context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());
         }
         // 获取启动类参数
         Set<Object> sources = this.getAllSources();
@@ -544,31 +543,31 @@ public interface ApplicationContextFactory {
         this.load(context, sources.toArray(new Object[0]));
         // 向监听器发通知: contextLoaded
         listeners.contextLoaded(context);
-    }
+        }
 ```
 
 > `SpringApplication#postProcessApplicationContext`, 上下文后置处理
 ```java
     protected void postProcessApplicationContext(ConfigurableApplicationContext context) {
         if (this.beanNameGenerator != null) {
-            context.getBeanFactory().registerSingleton("org.springframework.context.annotation.internalConfigurationBeanNameGenerator", this.beanNameGenerator);
+        context.getBeanFactory().registerSingleton("org.springframework.context.annotation.internalConfigurationBeanNameGenerator", this.beanNameGenerator);
         }
 
         if (this.resourceLoader != null) {
-            if (context instanceof GenericApplicationContext) {
-                ((GenericApplicationContext)context).setResourceLoader(this.resourceLoader);
-            }
+        if (context instanceof GenericApplicationContext) {
+        ((GenericApplicationContext)context).setResourceLoader(this.resourceLoader);
+        }
 
-            if (context instanceof DefaultResourceLoader) {
-                ((DefaultResourceLoader)context).setClassLoader(this.resourceLoader.getClassLoader());
-            }
+        if (context instanceof DefaultResourceLoader) {
+        ((DefaultResourceLoader)context).setClassLoader(this.resourceLoader.getClassLoader());
+        }
         }
 
         if (this.addConversionService) {
-            context.getBeanFactory().setConversionService(context.getEnvironment().getConversionService());
+        context.getBeanFactory().setConversionService(context.getEnvironment().getConversionService());
         }
 
-    }
+        }
 ```
 
 > `SpringApplication#applyInitializers`, 调用初始化配置类
@@ -578,14 +577,14 @@ public interface ApplicationContextFactory {
         Iterator var2 = this.getInitializers().iterator();
         // 遍历
         while(var2.hasNext()) {
-            ApplicationContextInitializer initializer = (ApplicationContextInitializer)var2.next();
-            Class<?> requiredType = GenericTypeResolver.resolveTypeArgument(initializer.getClass(), ApplicationContextInitializer.class);
-            Assert.isInstanceOf(requiredType, context, "Unable to call initializer.");
-            // 调用初始化方法
-            initializer.initialize(context);
+        ApplicationContextInitializer initializer = (ApplicationContextInitializer)var2.next();
+        Class<?> requiredType = GenericTypeResolver.resolveTypeArgument(initializer.getClass(), ApplicationContextInitializer.class);
+        Assert.isInstanceOf(requiredType, context, "Unable to call initializer.");
+        // 调用初始化方法
+        initializer.initialize(context);
         }
 
-    }
+        }
 ```
 
 > `SpringApplication#getAllSources`, 获取启动类参数
@@ -594,138 +593,138 @@ public interface ApplicationContextFactory {
         Set<Object> allSources = new LinkedHashSet();
         // primarySources 即为启动类,构造器中初始化
         if (!CollectionUtils.isEmpty(this.primarySources)) {
-            allSources.addAll(this.primarySources);
+        allSources.addAll(this.primarySources);
         }
 
         if (!CollectionUtils.isEmpty(this.sources)) {
-            allSources.addAll(this.sources);
+        allSources.addAll(this.sources);
         }
 
         return Collections.unmodifiableSet(allSources);
-    }
+        }
 ```
 
 > `SpringApplication#load`, 加载启动类
 ```java
     protected void load(ApplicationContext context, Object[] sources) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Loading source " + StringUtils.arrayToCommaDelimitedString(sources));
+        logger.debug("Loading source " + StringUtils.arrayToCommaDelimitedString(sources));
         }
 
         BeanDefinitionLoader loader = this.createBeanDefinitionLoader(this.getBeanDefinitionRegistry(context), sources);
         if (this.beanNameGenerator != null) {
-            loader.setBeanNameGenerator(this.beanNameGenerator);
+        loader.setBeanNameGenerator(this.beanNameGenerator);
         }
 
         if (this.resourceLoader != null) {
-            loader.setResourceLoader(this.resourceLoader);
+        loader.setResourceLoader(this.resourceLoader);
         }
 
         if (this.environment != null) {
-            loader.setEnvironment(this.environment);
+        loader.setEnvironment(this.environment);
         }
 
         loader.load();
-    }
+        }
 ```
 
 + 1.2.2.9 `SpringApplication#refreshContext` 刷新上下文
 ```java
   private void refreshContext(ConfigurableApplicationContext context) {
         if (this.registerShutdownHook) {
-            shutdownHook.registerApplicationContext(context);
+        shutdownHook.registerApplicationContext(context);
         }
 
         this.refresh(context);
-    }
+        }
 
-    protected void refresh(ConfigurableApplicationContext applicationContext) {
+protected void refresh(ConfigurableApplicationContext applicationContext) {
         applicationContext.refresh();
-    }
+        }
 ```
 
 > `AbstractApplicationContext#refresh`
 ```java
     public void refresh() throws BeansException, IllegalStateException {
-        synchronized(this.startupShutdownMonitor) {
-            StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
-            // 准备刷新
-            this.prepareRefresh();
-            // 初始化BeanFactory,解析XML
-            ConfigurableListableBeanFactory beanFactory = this.obtainFreshBeanFactory();
-            // 准备BeanFactory
-            this.prepareBeanFactory(beanFactory);
+synchronized(this.startupShutdownMonitor) {
+        StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
+        // 准备刷新
+        this.prepareRefresh();
+        // 初始化BeanFactory,解析XML
+        ConfigurableListableBeanFactory beanFactory = this.obtainFreshBeanFactory();
+        // 准备BeanFactory
+        this.prepareBeanFactory(beanFactory);
 
-            try {
-                // BeanFactory 后置流程处理,由子类实现进行处理 
-                this.postProcessBeanFactory(beanFactory);
-                StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
-                // 激活 BeanFactory 处理器
-                this.invokeBeanFactoryPostProcessors(beanFactory);
-                // 注册拦截Bean创建的Bean处理器
-                this.registerBeanPostProcessors(beanFactory);
-                beanPostProcess.end();
-                // 初始化资源文件
-                this.initMessageSource();
-                // 初始化事件广播器
-                this.initApplicationEventMulticaster();
-                // 由子类实现处理
-                this.onRefresh();
-                // 注册 listener 
-                this.registerListeners();
-                // 完成 BeanFactory 设置转换器
-                this.finishBeanFactoryInitialization(beanFactory);
-                // 完成完成操作
-                this.finishRefresh();
-            } catch (BeansException var10) {
-                if (this.logger.isWarnEnabled()) {
-                    this.logger.warn("Exception encountered during context initialization - cancelling refresh attempt: " + var10);
-                }
+        try {
+        // BeanFactory 后置流程处理,由子类实现进行处理 
+        this.postProcessBeanFactory(beanFactory);
+        StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
+        // 激活 BeanFactory 处理器
+        this.invokeBeanFactoryPostProcessors(beanFactory);
+        // 注册拦截Bean创建的Bean处理器
+        this.registerBeanPostProcessors(beanFactory);
+        beanPostProcess.end();
+        // 初始化资源文件
+        this.initMessageSource();
+        // 初始化事件广播器
+        this.initApplicationEventMulticaster();
+        // 由子类实现处理
+        this.onRefresh();
+        // 注册 listener 
+        this.registerListeners();
+        // 完成 BeanFactory 设置转换器
+        this.finishBeanFactoryInitialization(beanFactory);
+        // 完成完成操作
+        this.finishRefresh();
+        } catch (BeansException var10) {
+        if (this.logger.isWarnEnabled()) {
+        this.logger.warn("Exception encountered during context initialization - cancelling refresh attempt: " + var10);
+        }
 
-                this.destroyBeans();
-                this.cancelRefresh(var10);
-                throw var10;
-            } finally {
-                this.resetCommonCaches();
-                contextRefresh.end();
-            }
+        this.destroyBeans();
+        this.cancelRefresh(var10);
+        throw var10;
+        } finally {
+        this.resetCommonCaches();
+        contextRefresh.end();
+        }
 
         }
-    }
+        }
 
-    protected void prepareRefresh() {
+protected void prepareRefresh() {
         this.startupDate = System.currentTimeMillis();
         this.closed.set(false);
         this.active.set(true);
         if (this.logger.isDebugEnabled()) {
-            if (this.logger.isTraceEnabled()) {
-                this.logger.trace("Refreshing " + this);
-            } else {
-                this.logger.debug("Refreshing " + this.getDisplayName());
-            }
+        if (this.logger.isTraceEnabled()) {
+        this.logger.trace("Refreshing " + this);
+        } else {
+        this.logger.debug("Refreshing " + this.getDisplayName());
+        }
         }
 
         this.initPropertySources();
         this.getEnvironment().validateRequiredProperties();
         if (this.earlyApplicationListeners == null) {
-            this.earlyApplicationListeners = new LinkedHashSet(this.applicationListeners);
+        this.earlyApplicationListeners = new LinkedHashSet(this.applicationListeners);
         } else {
-            this.applicationListeners.clear();
-            this.applicationListeners.addAll(this.earlyApplicationListeners);
+        this.applicationListeners.clear();
+        this.applicationListeners.addAll(this.earlyApplicationListeners);
         }
 
         this.earlyApplicationEvents = new LinkedHashSet();
-    }
+        }
 
-    protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
         this.refreshBeanFactory();
         return this.getBeanFactory();
-    }
+        }
 
-    protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         beanFactory.setBeanClassLoader(this.getClassLoader());
         if (!shouldIgnoreSpel) {
-            beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+        beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
         }
 
         beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, this.getEnvironment()));
@@ -743,159 +742,159 @@ public interface ApplicationContextFactory {
         beanFactory.registerResolvableDependency(ApplicationContext.class, this);
         beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
         if (!NativeDetector.inNativeImage() && beanFactory.containsBean("loadTimeWeaver")) {
-            beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
-            beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+        beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+        beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
         }
 
         if (!beanFactory.containsLocalBean("environment")) {
-            beanFactory.registerSingleton("environment", this.getEnvironment());
+        beanFactory.registerSingleton("environment", this.getEnvironment());
         }
 
         if (!beanFactory.containsLocalBean("systemProperties")) {
-            beanFactory.registerSingleton("systemProperties", this.getEnvironment().getSystemProperties());
+        beanFactory.registerSingleton("systemProperties", this.getEnvironment().getSystemProperties());
         }
 
         if (!beanFactory.containsLocalBean("systemEnvironment")) {
-            beanFactory.registerSingleton("systemEnvironment", this.getEnvironment().getSystemEnvironment());
+        beanFactory.registerSingleton("systemEnvironment", this.getEnvironment().getSystemEnvironment());
         }
 
         if (!beanFactory.containsLocalBean("applicationStartup")) {
-            beanFactory.registerSingleton("applicationStartup", this.getApplicationStartup());
+        beanFactory.registerSingleton("applicationStartup", this.getApplicationStartup());
         }
 
-    }
+        }
 
-    protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, this.getBeanFactoryPostProcessors());
         if (!NativeDetector.inNativeImage() && beanFactory.getTempClassLoader() == null && beanFactory.containsBean("loadTimeWeaver")) {
-            beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
-            beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+        beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+        beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
         }
 
-    }
+        }
 ```
 > `AbstractApplicationContext#registerBeanPostProcessors` 注册拦截Bean创建的Bean处理器
 ```java
 protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-	PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
-}
+        PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
+        }
 ```
 
 > `AbstractApplicationContext#initMessageSource` 初始化资源文件
 ```java
 protected void initMessageSource() {
-	ConfigurableListableBeanFactory beanFactory = this.getBeanFactory();
-	if (beanFactory.containsLocalBean("messageSource")) {
-		this.messageSource = (MessageSource)beanFactory.getBean("messageSource", MessageSource.class);
-		if (this.parent != null && this.messageSource instanceof HierarchicalMessageSource) {
-			HierarchicalMessageSource hms = (HierarchicalMessageSource)this.messageSource;
-			if (hms.getParentMessageSource() == null) {
-				hms.setParentMessageSource(this.getInternalParentMessageSource());
-			}
-		}
+        ConfigurableListableBeanFactory beanFactory = this.getBeanFactory();
+        if (beanFactory.containsLocalBean("messageSource")) {
+        this.messageSource = (MessageSource)beanFactory.getBean("messageSource", MessageSource.class);
+        if (this.parent != null && this.messageSource instanceof HierarchicalMessageSource) {
+        HierarchicalMessageSource hms = (HierarchicalMessageSource)this.messageSource;
+        if (hms.getParentMessageSource() == null) {
+        hms.setParentMessageSource(this.getInternalParentMessageSource());
+        }
+        }
 
-		if (this.logger.isTraceEnabled()) {
-			this.logger.trace("Using MessageSource [" + this.messageSource + "]");
-		}
-	} else {
-		DelegatingMessageSource dms = new DelegatingMessageSource();
-		dms.setParentMessageSource(this.getInternalParentMessageSource());
-		this.messageSource = dms;
-		beanFactory.registerSingleton("messageSource", this.messageSource);
-		if (this.logger.isTraceEnabled()) {
-			this.logger.trace("No 'messageSource' bean, using [" + this.messageSource + "]");
-		}
-	}
+        if (this.logger.isTraceEnabled()) {
+        this.logger.trace("Using MessageSource [" + this.messageSource + "]");
+        }
+        } else {
+        DelegatingMessageSource dms = new DelegatingMessageSource();
+        dms.setParentMessageSource(this.getInternalParentMessageSource());
+        this.messageSource = dms;
+        beanFactory.registerSingleton("messageSource", this.messageSource);
+        if (this.logger.isTraceEnabled()) {
+        this.logger.trace("No 'messageSource' bean, using [" + this.messageSource + "]");
+        }
+        }
 
-}
+        }
 ```
 
 > `AbstractApplicationContext#initApplicationEventMulticaster`初始化事件广播器
 ```java
 protected void initApplicationEventMulticaster() {
-	ConfigurableListableBeanFactory beanFactory = this.getBeanFactory();
-	if (beanFactory.containsLocalBean("applicationEventMulticaster")) {
-		this.applicationEventMulticaster = (ApplicationEventMulticaster)beanFactory.getBean("applicationEventMulticaster", ApplicationEventMulticaster.class);
-		if (this.logger.isTraceEnabled()) {
-			this.logger.trace("Using ApplicationEventMulticaster [" + this.applicationEventMulticaster + "]");
-		}
-	} else {
-		this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
-		beanFactory.registerSingleton("applicationEventMulticaster", this.applicationEventMulticaster);
-		if (this.logger.isTraceEnabled()) {
-			this.logger.trace("No 'applicationEventMulticaster' bean, using [" + this.applicationEventMulticaster.getClass().getSimpleName() + "]");
-		}
-	}
+        ConfigurableListableBeanFactory beanFactory = this.getBeanFactory();
+        if (beanFactory.containsLocalBean("applicationEventMulticaster")) {
+        this.applicationEventMulticaster = (ApplicationEventMulticaster)beanFactory.getBean("applicationEventMulticaster", ApplicationEventMulticaster.class);
+        if (this.logger.isTraceEnabled()) {
+        this.logger.trace("Using ApplicationEventMulticaster [" + this.applicationEventMulticaster + "]");
+        }
+        } else {
+        this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+        beanFactory.registerSingleton("applicationEventMulticaster", this.applicationEventMulticaster);
+        if (this.logger.isTraceEnabled()) {
+        this.logger.trace("No 'applicationEventMulticaster' bean, using [" + this.applicationEventMulticaster.getClass().getSimpleName() + "]");
+        }
+        }
 
-}
+        }
 ```
 
 > `AbstractApplicationContext#registerListeners` 注册 listener
 ```java
 protected void registerListeners() {
-	Iterator var1 = this.getApplicationListeners().iterator();
+        Iterator var1 = this.getApplicationListeners().iterator();
 
-	while(var1.hasNext()) {
-		ApplicationListener<?> listener = (ApplicationListener)var1.next();
-		this.getApplicationEventMulticaster().addApplicationListener(listener);
-	}
+        while(var1.hasNext()) {
+        ApplicationListener<?> listener = (ApplicationListener)var1.next();
+        this.getApplicationEventMulticaster().addApplicationListener(listener);
+        }
 
-	String[] listenerBeanNames = this.getBeanNamesForType(ApplicationListener.class, true, false);
-	String[] var7 = listenerBeanNames;
-	int var3 = listenerBeanNames.length;
+        String[] listenerBeanNames = this.getBeanNamesForType(ApplicationListener.class, true, false);
+        String[] var7 = listenerBeanNames;
+        int var3 = listenerBeanNames.length;
 
-	for(int var4 = 0; var4 < var3; ++var4) {
-		String listenerBeanName = var7[var4];
-		this.getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
-	}
+        for(int var4 = 0; var4 < var3; ++var4) {
+        String listenerBeanName = var7[var4];
+        this.getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+        }
 
-	Set<ApplicationEvent> earlyEventsToProcess = this.earlyApplicationEvents;
-	this.earlyApplicationEvents = null;
-	if (!CollectionUtils.isEmpty(earlyEventsToProcess)) {
-		Iterator var9 = earlyEventsToProcess.iterator();
+        Set<ApplicationEvent> earlyEventsToProcess = this.earlyApplicationEvents;
+        this.earlyApplicationEvents = null;
+        if (!CollectionUtils.isEmpty(earlyEventsToProcess)) {
+        Iterator var9 = earlyEventsToProcess.iterator();
 
-		while(var9.hasNext()) {
-			ApplicationEvent earlyEvent = (ApplicationEvent)var9.next();
-			this.getApplicationEventMulticaster().multicastEvent(earlyEvent);
-		}
-	}
+        while(var9.hasNext()) {
+        ApplicationEvent earlyEvent = (ApplicationEvent)var9.next();
+        this.getApplicationEventMulticaster().multicastEvent(earlyEvent);
+        }
+        }
 
-}
+        }
 ```
 
 > `AbstractApplicationContext#finishBeanFactoryInitialization` 完成 BeanFactory 设置转换器
 ```java
 protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
-	if (beanFactory.containsBean("conversionService") && beanFactory.isTypeMatch("conversionService", ConversionService.class)) {
-		beanFactory.setConversionService((ConversionService)beanFactory.getBean("conversionService", ConversionService.class));
-	}
+        if (beanFactory.containsBean("conversionService") && beanFactory.isTypeMatch("conversionService", ConversionService.class)) {
+        beanFactory.setConversionService((ConversionService)beanFactory.getBean("conversionService", ConversionService.class));
+        }
 
-	if (!beanFactory.hasEmbeddedValueResolver()) {
-		beanFactory.addEmbeddedValueResolver((strVal) -> {
-			return this.getEnvironment().resolvePlaceholders(strVal);
-		});
-	}
+        if (!beanFactory.hasEmbeddedValueResolver()) {
+        beanFactory.addEmbeddedValueResolver((strVal) -> {
+        return this.getEnvironment().resolvePlaceholders(strVal);
+        });
+        }
 
-	String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
-	String[] var3 = weaverAwareNames;
-	int var4 = weaverAwareNames.length;
+        String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
+        String[] var3 = weaverAwareNames;
+        int var4 = weaverAwareNames.length;
 
-	for(int var5 = 0; var5 < var4; ++var5) {
-		String weaverAwareName = var3[var5];
-		this.getBean(weaverAwareName);
-	}
+        for(int var5 = 0; var5 < var4; ++var5) {
+        String weaverAwareName = var3[var5];
+        this.getBean(weaverAwareName);
+        }
 
-	beanFactory.setTempClassLoader((ClassLoader)null);
-	beanFactory.freezeConfiguration();
-	beanFactory.preInstantiateSingletons();
-}
+        beanFactory.setTempClassLoader((ClassLoader)null);
+        beanFactory.freezeConfiguration();
+        beanFactory.preInstantiateSingletons();
+        }
 ```
 
 + 1.2.2.10 `SpringApplication#afterRefresh`, 刷新后执行
 > 模板方法, 由子类实现处理
 ```java
     protected void afterRefresh(ConfigurableApplicationContext context, ApplicationArguments args) {
-    }
+        }
 ```
 
 + 1.2.2.11 `SpringApplication#callRunners`, 执行Runners
@@ -908,15 +907,15 @@ protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory b
         Iterator var4 = (new LinkedHashSet(runners)).iterator();
 
         while(var4.hasNext()) {
-            Object runner = var4.next();
-            if (runner instanceof ApplicationRunner) {
-                this.callRunner((ApplicationRunner)runner, args);
-            }
-
-            if (runner instanceof CommandLineRunner) {
-                this.callRunner((CommandLineRunner)runner, args);
-            }
+        Object runner = var4.next();
+        if (runner instanceof ApplicationRunner) {
+        this.callRunner((ApplicationRunner)runner, args);
         }
 
-    }
+        if (runner instanceof CommandLineRunner) {
+        this.callRunner((CommandLineRunner)runner, args);
+        }
+        }
+
+        }
 ```
