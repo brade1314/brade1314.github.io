@@ -489,6 +489,7 @@ protected void configureProfiles(ConfigurableEnvironment environment, String[] a
 ```
 
 > 上下文工厂
+
 ```java
 public interface ApplicationContextFactory {
     ApplicationContextFactory DEFAULT = (webApplicationType) -> {
