@@ -20,7 +20,7 @@ tags:
 
 > 注解定义如下:
 ```java
-    @Target({ElementType.TYPE})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
@@ -44,10 +44,11 @@ public @interface SpringBootApplication {}
 ### 1.1.2 `@EnableAutoConfiguration` 注解
 > 开启自动配置功能, 使自动配置生效.
 
-> 包含 `@AutoConfigurationPackage` ,`@Import({AutoConfigurationImportSelector.class})` 注解
+> 包含 `@AutoConfigurationPackage` ,`@Import({AutoConfigurationImportSelector.class})` 注解.
 
 > `AutoConfigurationPackage` : 重点是`@Import({Registrar.class})` ,默认将主配置类(`@SpringBootApplication`)所在的包及其子包里面的所有组件扫描到`Spring`容器中,
 > 所以通常将 `@SpringBootApplication` 注解过的类放到最顶层.
+
 ```java
     static class Registrar implements ImportBeanDefinitionRegistrar, DeterminableImports {
         Registrar() {
@@ -65,6 +66,7 @@ public @interface SpringBootApplication {}
 
 > `@Import({AutoConfigurationImportSelector.class})` : 导入组件的选择器, `#AutoConfigurationEntry` -> `getCandidateConfigurations`,
 > 加载 `spring-boot-autoconfigure`包中 `META-INF/spring.factories` 文件中默认的自动配置类.
+
 ```java
     protected AutoConfigurationImportSelector.AutoConfigurationEntry getAutoConfigurationEntry(AnnotationMetadata annotationMetadata) {
         if (!this.isEnabled(annotationMetadata)) {
@@ -92,7 +94,8 @@ public @interface SpringBootApplication {}
 ```
 
 ## 1.2 `SpringApplication#run(Class<?> primarySource, String... args)`
-> 先创建 `SpringApplication` 实例,再调用对应的`run`方法
+> 先创建 `SpringApplication` 实例,再调用对应的`run`方法.
+
 ```java
     public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
         return (new SpringApplication(primarySources)).run(args);
@@ -130,7 +133,8 @@ public @interface SpringBootApplication {}
     }
 ```
 
-+ 1.2.1.1 `WebApplicationType#deduceFromClasspath` 获取应用类型
+### 1.2.1.1 `WebApplicationType#deduceFromClasspath` 获取应用类型.
+
 ```java
     static WebApplicationType deduceFromClasspath() {
         if (ClassUtils.isPresent("org.springframework.web.reactive.DispatcherHandler", (ClassLoader)null) && !ClassUtils.isPresent("org.springframework.web.servlet.DispatcherServlet", (ClassLoader)null) && !ClassUtils.isPresent("org.glassfish.jersey.servlet.ServletContainer", (ClassLoader)null)) {
@@ -151,7 +155,8 @@ public @interface SpringBootApplication {}
     }
 ```
 
-+ 1.2.1.2 `SpringApplication#getBootstrapRegistryInitializersFromSpringFactories` 引导初始化
+### 1.2.1.2 `SpringApplication#getBootstrapRegistryInitializersFromSpringFactories` 引导初始化.
+
 ```java
     private List<BootstrapRegistryInitializer> getBootstrapRegistryInitializersFromSpringFactories() {
         ArrayList<BootstrapRegistryInitializer> initializers = new ArrayList();
@@ -161,8 +166,7 @@ public @interface SpringBootApplication {}
         initializers.addAll(this.getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
         return initializers;
     }
-```
-```java
+
     private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
         return this.getSpringFactoriesInstances(type, new Class[0]);
     }
@@ -197,7 +201,8 @@ public @interface SpringBootApplication {}
     }
 ```
 
-> `SpringFactoriesLoader#loadFactoryNames`,解析 `spring.factories`文件,获取对应配置类
+> `SpringFactoriesLoader#loadFactoryNames`,解析 `spring.factories`文件,获取对应配置类.
+
 ```java
     public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
         ClassLoader classLoaderToUse = classLoader;
@@ -254,7 +259,8 @@ public @interface SpringBootApplication {}
     }
 ```
 
-+ 1.2.1.3 `SpringApplication#deduceMainApplicationClass`, 应用程序入口主类
+### 1.2.1.3 `SpringApplication#deduceMainApplicationClass`, 应用程序入口主类.
+
 ```java
     private Class<?> deduceMainApplicationClass() {
         try {
@@ -276,7 +282,8 @@ public @interface SpringBootApplication {}
     }
 ```
 
-### 1.2.2 `SpringApplication#run` 方法
+### 1.2.2 `SpringApplication#run` 方法.
+
 ```java
     public ConfigurableApplicationContext run(String... args) {
         // 计时器
@@ -337,7 +344,8 @@ public @interface SpringBootApplication {}
         }
 ```
 
-+ 1.2.2.1 `SpringApplication#createBootstrapContext`,引导上下文初始化
+### 1.2.2.1 `SpringApplication#createBootstrapContext`,引导上下文初始化.
+
 ```java
     private DefaultBootstrapContext createBootstrapContext() {
         DefaultBootstrapContext bootstrapContext = new DefaultBootstrapContext();
@@ -349,14 +357,16 @@ public @interface SpringBootApplication {}
         }
 ```
 
-+ 1.2.2.2 `SpringApplication#configureHeadlessProperty`,无头属性设置
+### 1.2.2.2 `SpringApplication#configureHeadlessProperty`,无头属性设置.
+
 ```java
     private void configureHeadlessProperty() {
         System.setProperty("java.awt.headless", System.getProperty("java.awt.headless", Boolean.toString(this.headless)));
         }
 ```
 
-+ 1.2.2.3 `SpringApplication#getRunListeners`,获取监听器
+### 1.2.2.3 `SpringApplication#getRunListeners`,获取监听器.
+
 ```java
     private SpringApplicationRunListeners getRunListeners(String[] args) {
         Class<?>[] types = new Class[]{SpringApplication.class, String[].class};
@@ -364,7 +374,8 @@ public @interface SpringBootApplication {}
         }
 ```
 
-+ 1.2.2.4 `SpringApplication#prepareEnvironment`,准备环境
+### 1.2.2.4 `SpringApplication#prepareEnvironment`,准备环境.
+
 ```java
     private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners, DefaultBootstrapContext bootstrapContext, ApplicationArguments applicationArguments) {
         // 获取类型对应的 ConfigurableEnvironment
@@ -385,7 +396,8 @@ public @interface SpringBootApplication {}
         }
 ```
 
-> `SpringApplication#getOrCreateEnvironment` 获取环境
+> `SpringApplication#getOrCreateEnvironment` 获取环境.
+
 ```java
     private ConfigurableEnvironment getOrCreateEnvironment() {
         if (this.environment != null) {
@@ -403,7 +415,8 @@ default:
         }
 ```
 
-> `SpringApplication#configureEnvironment` 配置环境
+> `SpringApplication#configureEnvironment` 配置环境.
+
 ```java
     protected void configureEnvironment(ConfigurableEnvironment environment, String[] args) {
         if (this.addConversionService) {
@@ -438,7 +451,8 @@ protected void configurePropertySources(ConfigurableEnvironment environment, Str
 protected void configureProfiles(ConfigurableEnvironment environment, String[] args) {}
 ```
 
-+ 1.2.2.5 `SpringApplication#configureIgnoreBeanInfo`, 配置忽略 Bean 信息
+### 1.2.2.5 `SpringApplication#configureIgnoreBeanInfo`, 配置忽略 Bean 信息.
+
 ```java
     private void configureIgnoreBeanInfo(ConfigurableEnvironment environment) {
         // 如果为空,则设置默认值为 true
@@ -450,7 +464,8 @@ protected void configureProfiles(ConfigurableEnvironment environment, String[] a
         }
 ```
 
-+ 1.2.2.6 `SpringApplication#printBanner`, 打印 `Spring` 横幅
+### 1.2.2.6 `SpringApplication#printBanner`, 打印 `Spring` 横幅.
+
 ```java
     private Banner printBanner(ConfigurableEnvironment environment) {
         if (this.bannerMode == Mode.OFF) {
@@ -463,12 +478,14 @@ protected void configureProfiles(ConfigurableEnvironment environment, String[] a
         }
 ```
 
-+ 1.2.2.7 `SpringApplication#createApplicationContext`, 根据应用类型创建应用上下文
+### 1.2.2.7 `SpringApplication#createApplicationContext`, 根据应用类型创建应用上下文
+
 ```java
-    // 构造器中初始化了上下文工厂, this.applicationContextFactory = ApplicationContextFactory.DEFAULT;
-protected ConfigurableApplicationContext createApplicationContext() {
+    // 构造器中初始化了上下文工厂, 
+    this.applicationContextFactory = ApplicationContextFactory.DEFAULT;
+    protected ConfigurableApplicationContext createApplicationContext() {
         return this.applicationContextFactory.create(this.webApplicationType);
-        }
+    }
 ```
 
 > 上下文工厂
@@ -505,7 +522,8 @@ public interface ApplicationContextFactory {
 }
 ```
 
-+ 1.2.2.8 `SpringApplication#prepareContext`, 准备上下文
+### 1.2.2.8 `SpringApplication#prepareContext`, 准备上下文.
+
 ```java
     private void prepareContext(DefaultBootstrapContext bootstrapContext, ConfigurableApplicationContext context, ConfigurableEnvironment environment, SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
         // 设置上下文环境
@@ -546,7 +564,8 @@ public interface ApplicationContextFactory {
         }
 ```
 
-> `SpringApplication#postProcessApplicationContext`, 上下文后置处理
+> `SpringApplication#postProcessApplicationContext`, 上下文后置处理.
+
 ```java
     protected void postProcessApplicationContext(ConfigurableApplicationContext context) {
         if (this.beanNameGenerator != null) {
@@ -570,7 +589,8 @@ public interface ApplicationContextFactory {
         }
 ```
 
-> `SpringApplication#applyInitializers`, 调用初始化配置类
+> `SpringApplication#applyInitializers`, 调用初始化配置类.
+
 ```java
     protected void applyInitializers(ConfigurableApplicationContext context) {
         // 在构造器中调用 setInitializers() 加载了
@@ -587,7 +607,8 @@ public interface ApplicationContextFactory {
         }
 ```
 
-> `SpringApplication#getAllSources`, 获取启动类参数
+> `SpringApplication#getAllSources`, 获取启动类参数.
+
 ```java
     public Set<Object> getAllSources() {
         Set<Object> allSources = new LinkedHashSet();
@@ -604,7 +625,8 @@ public interface ApplicationContextFactory {
         }
 ```
 
-> `SpringApplication#load`, 加载启动类
+> `SpringApplication#load`, 加载启动类.
+
 ```java
     protected void load(ApplicationContext context, Object[] sources) {
         if (logger.isDebugEnabled()) {
@@ -628,7 +650,8 @@ public interface ApplicationContextFactory {
         }
 ```
 
-+ 1.2.2.9 `SpringApplication#refreshContext` 刷新上下文
+### 1.2.2.9 `SpringApplication#refreshContext` 刷新上下文.
+
 ```java
   private void refreshContext(ConfigurableApplicationContext context) {
         if (this.registerShutdownHook) {
@@ -638,12 +661,13 @@ public interface ApplicationContextFactory {
         this.refresh(context);
         }
 
-protected void refresh(ConfigurableApplicationContext applicationContext) {
+  protected void refresh(ConfigurableApplicationContext applicationContext) {
         applicationContext.refresh();
         }
 ```
 
 > `AbstractApplicationContext#refresh`
+
 ```java
     public void refresh() throws BeansException, IllegalStateException {
 synchronized(this.startupShutdownMonitor) {
@@ -773,14 +797,16 @@ protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory b
 
         }
 ```
-> `AbstractApplicationContext#registerBeanPostProcessors` 注册拦截Bean创建的Bean处理器
+> `AbstractApplicationContext#registerBeanPostProcessors` 注册拦截Bean创建的Bean处理器.
+
 ```java
 protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
         }
 ```
 
-> `AbstractApplicationContext#initMessageSource` 初始化资源文件
+> `AbstractApplicationContext#initMessageSource` 初始化资源文件.
+
 ```java
 protected void initMessageSource() {
         ConfigurableListableBeanFactory beanFactory = this.getBeanFactory();
@@ -809,7 +835,8 @@ protected void initMessageSource() {
         }
 ```
 
-> `AbstractApplicationContext#initApplicationEventMulticaster`初始化事件广播器
+> `AbstractApplicationContext#initApplicationEventMulticaster`初始化事件广播器.
+
 ```java
 protected void initApplicationEventMulticaster() {
         ConfigurableListableBeanFactory beanFactory = this.getBeanFactory();
@@ -829,7 +856,8 @@ protected void initApplicationEventMulticaster() {
         }
 ```
 
-> `AbstractApplicationContext#registerListeners` 注册 listener
+> `AbstractApplicationContext#registerListeners` 注册 listener.
+
 ```java
 protected void registerListeners() {
         Iterator var1 = this.getApplicationListeners().iterator();
@@ -862,7 +890,8 @@ protected void registerListeners() {
         }
 ```
 
-> `AbstractApplicationContext#finishBeanFactoryInitialization` 完成 BeanFactory 设置转换器
+> `AbstractApplicationContext#finishBeanFactoryInitialization` 完成 BeanFactory 设置转换器.
+
 ```java
 protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory.containsBean("conversionService") && beanFactory.isTypeMatch("conversionService", ConversionService.class)) {
@@ -890,14 +919,14 @@ protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory b
         }
 ```
 
-+ 1.2.2.10 `SpringApplication#afterRefresh`, 刷新后执行
+### 1.2.2.10 `SpringApplication#afterRefresh`, 刷新后执行
 > 模板方法, 由子类实现处理
 ```java
     protected void afterRefresh(ConfigurableApplicationContext context, ApplicationArguments args) {
         }
 ```
 
-+ 1.2.2.11 `SpringApplication#callRunners`, 执行Runners
+### 1.2.2.11 `SpringApplication#callRunners`, 执行Runners
 ```java
     private void callRunners(ApplicationContext context, ApplicationArguments args) {
         List<Object> runners = new ArrayList();
