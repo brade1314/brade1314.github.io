@@ -1,12 +1,8 @@
 ---
-layout:       post 
-title:        "disruptor源码分析"
-date:         2022-05-11 11:40:00 
-author:       "Brade"
-header-style: text 
-header-mask:  0.3 
-catalog:      true 
-tags:
+layout:       post title:        "disruptor源码分析"
+date:         2022-05-11 11:40:00 author:       "Brade"
+header-style: text header-mask:  0.3 catalog:      true tags:
+
 - disruptor
 - Java
 - 源码
@@ -36,6 +32,7 @@ tags:
 ## 3 测试用例
 
 ```java
+
 public class DisruptorTest {
 
     private final static AtomicLong eventCount = new AtomicLong();
@@ -144,6 +141,7 @@ public class DisruptorTest {
         }
     }
 }
+
 ```
 
 ## 4 启动流程解析
@@ -152,7 +150,9 @@ public class DisruptorTest {
     - 一般指数据对象,比如上面用例中的`StringEvent`,或者订单,通知等
 2. 创建 `Disruptor` 实例
     - 构造方法:
+
     ```java
+    
    /**
      * Create a new Disruptor.
      *
@@ -173,9 +173,13 @@ public class DisruptorTest {
             RingBuffer.create(producerType, eventFactory, ringBufferSize, waitStrategy),
             new BasicExecutor(threadFactory));
     }
+    
     ```
+
     - 环形队列:
+
     ```java
+    
     /**
      * Create a new Ring Buffer with the specified producer type (SINGLE or MULTI)
      *
@@ -247,10 +251,99 @@ public class DisruptorTest {
 
         return new RingBuffer<E>(factory, sequencer);
     }
+
     ```
+
+    ```java
+       abstract class RingBufferFields<E> extends RingBufferPad {
+       private static final int BUFFER_PAD;
+       private static final long REF_ARRAY_BASE;
+       private static final int REF_ELEMENT_SHIFT;
+       private static final Unsafe UNSAFE = Util.getUnsafe();
+   
+       static {
+           // 返回数组中一个元素占用的大小
+           final int scale = UNSAFE.arrayIndexScale(Object[].class);
+           if (4 == scale) {
+               REF_ELEMENT_SHIFT = 2;
+           } else if (8 == scale) {
+               REF_ELEMENT_SHIFT = 3;
+           } else {
+               throw new IllegalStateException("Unknown pointer size");
+           }
+           // 缓存填充,填充前后
+           BUFFER_PAD = 128 / scale;
+           // Including the buffer pad in the array base offset
+           // UNSAFE.arrayBaseOffset(Object[].class): 获取数组第一个元素的偏移地址,即 16
+           // 64 位的 JVM 数组类型的基础偏移都是 16,原始类型的基础偏移都是 12 (测试结果在不同 JVM 下可能会有所区别)
+           // REF_ARRAY_BASE = 128 + 16 = 144
+           // 定位数组中每个元素在内存中的位置:增量为4,向左左移2位相当于 * 4,即 32 * 4 = 128 位运算提高速度
+           REF_ARRAY_BASE = UNSAFE.arrayBaseOffset(Object[].class) + (BUFFER_PAD << REF_ELEMENT_SHIFT);
+       }
+   
+       private final long indexMask;
+       private final Object[] entries;
+       protected final int bufferSize;
+       protected final Sequencer sequencer;
+   
+       RingBufferFields(
+               EventFactory<E> eventFactory,
+               Sequencer sequencer) {
+           this.sequencer = sequencer;
+           this.bufferSize = sequencer.getBufferSize();
+   
+           if (bufferSize < 1) {
+               throw new IllegalArgumentException("bufferSize must not be less than 1");
+           }
+           // bufferSize 必须是 2 的幂
+           if (Integer.bitCount(bufferSize) != 1) {
+               throw new IllegalArgumentException("bufferSize must be a power of 2");
+           }
+   
+           this.indexMask = bufferSize - 1;
+           // 初始化数组并指定长度: BUFFER_PAD(32) * 2 + 16 = 80
+           // BUFFER_PAD为数组填充大小,避免数组的有效元素出现伪共享
+           // 数组的前X个元素会出现伪共享和后X个元素可能会出现伪共享,可能和无关数据加载到同一个缓存行
+           // 额外创建2个填充空间的大小,首尾填充,避免数组的有效载荷和其它成员加载到同一缓存行
+           this.entries = new Object[sequencer.getBufferSize() + 2 * BUFFER_PAD];
+           fill(eventFactory);
+       }
+   
+       /**
+        * 填充数组元素:从下标为32开始
+        *
+        * @param eventFactory
+        */
+       private void fill(EventFactory<E> eventFactory) {
+           for (int i = 0; i < bufferSize; i++) {
+               // BUFFER_PAD+i为真正的数组索引:32+i
+               entries[BUFFER_PAD + i] = eventFactory.newInstance();
+           }
+       }
+   
+       /**
+        * 从数组 entries 中获取 序列 sequence 对应的元素值
+        *
+        * @param sequence
+        * @return
+        */
+       @SuppressWarnings("unchecked")
+       protected final E elementAt(long sequence) {
+           // REF_ARRAY_BASE(获取数组第一个元素的偏移地址) + (sequence & indexMask) << REF_ELEMENT_SHIFT)(序列对应在数组中的偏移量)
+           // REF_ARRAY_BASE: 144
+           // 144 + (0/1/2 左移 2 位,相当于*4),即144 +(0/4/8/12)
+           // bufferSize 必须2的幂
+           return (E) UNSAFE.getObject(entries, REF_ARRAY_BASE + ((sequence & indexMask) << REF_ELEMENT_SHIFT));
+       }
+   }
+    ```
+
+
 3. 指定事件消费者
     - 独立事件消费者
+
     ```java
+    
     /**
      * <p>Set up event handlers to handle events from the ring buffer. These handlers will process events
      * as soon as they become available, in parallel.</p>
@@ -300,9 +393,13 @@ public class DisruptorTest {
 
         return new EventHandlerGroup<>(this, consumerRepository, processorSequences);
     }
+
     ```
+
     - 共享事件消费者
+
     ```java
+
     /**
      * Set up a {@link WorkerPool} to distribute an event to one of a pool of work handler threads.
      * Each event will only be processed by one of the work handlers.
@@ -333,7 +430,9 @@ public class DisruptorTest {
 
         return new EventHandlerGroup<>(this, consumerRepository, workerSequences);
     }
+    
     ```
+
     ```java
      /**
      * 更新链中下一个的门控序列
@@ -353,10 +452,15 @@ public class DisruptorTest {
             consumerRepository.unMarkEventProcessorsAsEndOfChain(barrierSequences);
         }
     }
+
     ```
+
 4. 启动消费者
+
     - 启动方法:
+
     ```java
+
     /**
      * <p>Starts the event processors and returns the fully configured ring buffer.</p>
      *
@@ -380,9 +484,13 @@ public class DisruptorTest {
 
         return ringBuffer;
     }
+
     ```
+
     - BatchEventProcessor
+
     ```java
+
     public void run()
     {
         if (running.compareAndSet(IDLE, RUNNING))
@@ -462,9 +570,13 @@ public class DisruptorTest {
             }
         }
     }
+
     ```
+
     - WorkProcessor
+
     ```java
+
     public void run()
     {
         if (!running.compareAndSet(false, true))
@@ -533,6 +645,7 @@ public class DisruptorTest {
 
         running.set(false);
     }
+
     ```
 
 
