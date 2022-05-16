@@ -1,7 +1,12 @@
 ---
-layout:       post title:        "disruptor源码分析"
-date:         2022-05-11 11:40:00 author:       "Brade"
-header-style: text header-mask:  0.3 catalog:      true tags:
+layout:       post 
+title:        "disruptor源码分析"
+date:         2022-05-11 11:40:00 
+author:       "Brade"
+header-style: text 
+header-mask:  0.3 
+catalog:      true 
+tags:
 
 - disruptor
 - Java
